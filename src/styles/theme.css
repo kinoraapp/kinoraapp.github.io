@@ -1,0 +1,45 @@
+/*
+ * Brand and theme tokens. To rebrand, change the --brand-* colors here and in
+ * src/config/brand.ts (used for the app manifest and logo), then run `npm run icons`.
+ * The app uses one dark theme on purpose: video looks best on a dark surround.
+ */
+:root {
+  color-scheme: dark;
+
+  --brand-1: #ff6a3d;
+  --brand-2: #e8336d;
+  --brand-gradient: linear-gradient(135deg, var(--brand-1), var(--brand-2));
+  --brand-text: #ff8a66; /* readable brand color for text on dark surfaces */
+  --chart-1: #f25c36; /* validated for contrast against --surface */
+
+  --bg: #0d0c11;
+  --bg-elev: #131219;
+  --surface: #1a1922;
+  --surface-2: #23212c;
+  --surface-3: #2e2b39;
+  --border: #2c2936;
+  --border-strong: #423e50;
+
+  --text: #f6f4fa;
+  --text-2: #cfcad9;
+  --muted: #9893a8;
+
+  --danger: #ff5a6e;
+  --success: #3ddc97;
+  --warning: #ffc04d;
+  --info: #6cb4ff;
+
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 18px;
+  --radius-pill: 999px;
+  --shadow: 0 12px 32px rgb(0 0 0 / 0.5);
+  --focus: 0 0 0 3px rgb(255 106 61 / 0.45);
+
+  --nav-h: 60px;
+  --sidebar-w: 240px;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+}

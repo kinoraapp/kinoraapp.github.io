@@ -1,0 +1,44 @@
+# Applies database migrations and deploys the Edge Functions to your Supabase project.
+# Run it by hand from the Actions tab ("Run workflow") after changing supabase/.
+# Needs (Settings -> Secrets and variables -> Actions):
+#   Secrets:   SUPABASE_ACCESS_TOKEN (supabase.com/dashboard/account/tokens), SUPABASE_DB_PASSWORD
+#   Variables: SUPABASE_PROJECT_REF (the "abcd1234" part of https://abcd1234.supabase.co)
+# Mux secrets are set once with `npx supabase secrets set` (docs/SETUP.md), not here.
+name: Deploy Supabase backend
+
+on:
+  workflow_dispatch:
+    inputs:
+      migrations:
+        description: Apply database migrations
+        type: boolean
+        default: true
+      functions:
+        description: Deploy Edge Functions
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+      PROJECT_REF: ${{ vars.SUPABASE_PROJECT_REF }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - name: Link project
+        run: supabase link --project-ref "$PROJECT_REF" --password "$SUPABASE_DB_PASSWORD"
+      - name: Apply migrations
+        if: inputs.migrations
+        run: supabase db push --password "$SUPABASE_DB_PASSWORD"
+      - name: Deploy Edge Functions
+        if: inputs.functions
+        run: supabase functions deploy --project-ref "$PROJECT_REF"

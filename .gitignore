@@ -1,0 +1,23 @@
+# Dependencies and build output
+node_modules/
+dist/
+dev-dist/
+*.tsbuildinfo
+
+# Local environment files: never commit real keys
+.env
+.env.*
+!.env.example
+
+# Supabase CLI local state
+supabase/.branches/
+supabase/.temp/
+supabase/functions/.env
+
+# Editors and OS
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+*.log

@@ -1,0 +1,85 @@
+# Checks every push and pull request, and deploys the site to GitHub Pages from main.
+# Setup: docs/DEPLOYMENT.md. Repository settings needed:
+#   Settings -> Pages -> Source: "GitHub Actions"
+#   Settings -> Secrets and variables -> Actions -> Variables:
+#     VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY (public values), optional VITE_APP_NAME, CUSTOM_DOMAIN
+name: Build and deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Type check and tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - name: Tests (database access rules on PGlite, Mux token signing)
+        run: npm test
+
+  build:
+    name: Build site
+    needs: check
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Work out the base path
+        id: base
+        run: |
+          repo="${{ github.event.repository.name }}"
+          if [ -n "${{ vars.CUSTOM_DOMAIN }}" ] || [[ "$repo" == *.github.io ]]; then
+            echo "path=/" >> "$GITHUB_OUTPUT"
+          else
+            echo "path=/$repo/" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Build
+        run: npm run build
+        env:
+          VITE_SUPABASE_URL: ${{ vars.VITE_SUPABASE_URL || secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ vars.VITE_SUPABASE_ANON_KEY || secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_APP_NAME: ${{ vars.VITE_APP_NAME }}
+          VITE_MAX_UPLOAD_MB: ${{ vars.VITE_MAX_UPLOAD_MB }}
+          VITE_MAX_VIDEO_MINUTES: ${{ vars.VITE_MAX_VIDEO_MINUTES }}
+          VITE_BASE_PATH: ${{ steps.base.outputs.path }}
+          CUSTOM_DOMAIN: ${{ vars.CUSTOM_DOMAIN }}
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,40 @@
+{
+  "name": "kinora",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Kinora: a short-video sharing progressive web app (React + Supabase + Mux)",
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "npm run typecheck && vite build && node scripts/postbuild.mjs",
+    "preview": "vite preview",
+    "typecheck": "tsc -p tsconfig.json && tsc -p tsconfig.node.json && tsc -p tsconfig.functions.json",
+    "test": "vitest run",
+    "icons": "node scripts/generate-icons.mjs"
+  },
+  "dependencies": {
+    "@mux/upchunk": "3.5.0",
+    "@supabase/supabase-js": "2.118.0",
+    "hls.js": "1.7.3",
+    "lucide-react": "1.61.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "react-router-dom": "7.18.4"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.5.11",
+    "@types/node": "24.19.2",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.1.2",
+    "sharp": "0.35.5",
+    "typescript": "5.9.3",
+    "vite": "8.3.5",
+    "vite-plugin-pwa": "2.0.0",
+    "vitest": "5.0.5",
+    "workbox-window": "7.4.1"
+  }
+}

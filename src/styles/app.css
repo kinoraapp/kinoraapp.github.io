@@ -1303,6 +1303,43 @@ input[type="datetime-local"].input {
     text-shadow: none;
   }
 }
+/* Short screens (small phones, landscape): keep the action rail below the top controls. */
+@media (max-width: 899px) {
+  .feed-top-controls {
+    flex-direction: row;
+  }
+}
+@media (max-width: 899px) and (max-height: 760px) {
+  .rail {
+    gap: 8px;
+    bottom: 16px;
+  }
+  .rail-icon {
+    width: 42px;
+    height: 42px;
+  }
+}
+@media (max-width: 899px) and (max-height: 600px) {
+  .rail {
+    gap: 2px;
+    bottom: 12px;
+  }
+  .rail-icon {
+    width: 36px;
+    height: 36px;
+  }
+  .rail-icon svg {
+    width: 22px;
+    height: 22px;
+  }
+  .rail-count {
+    font-size: 0.68rem;
+  }
+  .rail-avatar .avatar {
+    width: 38px !important;
+    height: 38px !important;
+  }
+}
 .rail-btn.is-liked .rail-icon {
   color: var(--brand-2);
   animation: pop 0.3s ease-out;
